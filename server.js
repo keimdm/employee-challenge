@@ -2,6 +2,7 @@
 const express = require("express");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const cTable = require("console.table");
 
 // DATA
 const menu  = [
@@ -9,7 +10,7 @@ const menu  = [
         type: 'list',
         message: 'Please select one of the following options:',
         choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
-        name: 'shape',
+        name: 'selection',
     }
 ];
 
@@ -45,17 +46,20 @@ const updateEmployee  = [
         type: 'list',
         message: 'Please select one of the following options:',
         choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
-        name: 'selection',
+        name: 'shape',
     }
 ];
 
 // DB CONNECTION
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "dddddddd",
-    database: "employee_data_db"
-});
+const db = mysql.createConnection(
+    {
+        host: "localhost",
+        user: "root",
+        password: "dddddddd",
+        database: "employee_data_db"
+},
+console.log(`Connected to the employee_data_db database.`)
+);
 
 // APP/PORT NUMBER
 const app = express();
@@ -73,19 +77,39 @@ app.use((req, res) => {
 
 // LISTENER
 app.listen(PORT, () => {
-    console.log(`Example app listening at http://localhost:${PORT}`);
+    //console.log(`Example app listening at http://localhost:${PORT}`);
 });
 
 // INITIALIZATION
 inquirer.prompt(menu).then((response) => {
     switch (response.selection) {
         case "View All Departments":
-            db.query('SELECT * FROM department', function (err, results) {
+            db.query('SELECT * FROM department;', function (err, results) {
                 if (err) {
                     console.error(err);
                 }
                 else {
-                    console.log(results);
+                    console.table(results);
+                }
+            });
+            break;
+        case "View All Roles":
+            db.query('SELECT * FROM role;', function (err, results) {
+                if (err) {
+                    console.error(err);
+                }
+                else {
+                    console.table(results);
+                }
+            });
+            break;
+        case "View All Employees":
+            db.query('SELECT * FROM employee;', function (err, results) {
+                if (err) {
+                    console.error(err);
+                }
+                else {
+                    console.table(results);
                 }
             });
             break;
