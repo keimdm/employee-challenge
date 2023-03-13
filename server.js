@@ -4,9 +4,53 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 
 // DATA
+const menu  = [
+    {
+        type: 'list',
+        message: 'Please select one of the following options:',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
+        name: 'shape',
+    }
+];
+
+const addDepartment  = [
+    {
+        type: 'list',
+        message: 'Please select one of the following options:',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
+        name: 'shape',
+    }
+];
+
+const addRole  = [
+    {
+        type: 'list',
+        message: 'Please select one of the following options:',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
+        name: 'shape',
+    }
+];
+
+const addEmployee  = [
+    {
+        type: 'list',
+        message: 'Please select one of the following options:',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
+        name: 'shape',
+    }
+];
+
+const updateEmployee  = [
+    {
+        type: 'list',
+        message: 'Please select one of the following options:',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
+        name: 'selection',
+    }
+];
 
 // DB CONNECTION
-mysql.createConnection({
+const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "dddddddd",
@@ -23,10 +67,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // ROUTES
 
-app.get('*', (req, res) => {
-    res.send("Hello World");
-});
-
 app.use((req, res) => {
     res.status(404).end();
   });
@@ -34,4 +74,20 @@ app.use((req, res) => {
 // LISTENER
 app.listen(PORT, () => {
     console.log(`Example app listening at http://localhost:${PORT}`);
+});
+
+// INITIALIZATION
+inquirer.prompt(menu).then((response) => {
+    switch (response.selection) {
+        case "View All Departments":
+            db.query('SELECT * FROM department', function (err, results) {
+                if (err) {
+                    console.error(err);
+                }
+                else {
+                    console.log(results);
+                }
+            });
+            break;
+    }
 });
