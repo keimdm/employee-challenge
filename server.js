@@ -3,8 +3,11 @@ const express = require("express");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const cTable = require("console.table");
+const Query = require("./queryMachine.js");
 
 // DATA
+const queryMachine = new Query();
+
 const menu = [
     {
         type: 'list',
@@ -116,34 +119,40 @@ function runMenu() {
         switch (response.selection) {
             case "View All Departments":
                 // runs  query to show all departments
-                db.query('SELECT * FROM department;', function (err, results) {
+                db.query(queryMachine.selectDepartmentQuery(), function (err, results) {
                     if (err) {
                         console.error(err);
+                        runMenu();
                     }
                     else {
                         console.table(results);
+                        runMenu();
                     }
                 });
                 break;
             case "View All Roles":
                 // runs query to show all roles
-                db.query('SELECT * FROM role;', function (err, results) {
+                db.query(queryMachine.selectRoleQuery(), function (err, results) {
                     if (err) {
                         console.error(err);
+                        runMenu();
                     }
                     else {
                         console.table(results);
+                        runMenu();
                     }
                 });
                 break;
             case "View All Employees":
                 // runs query to show all employees
-                db.query('SELECT * FROM employee;', function (err, results) {
+                db.query(queryMachine.selectEmployeeQuery(), function (err, results) {
                     if (err) {
                         console.error(err);
+                        runMenu();
                     }
                     else {
                         console.table(results);
+                        runMenu();
                     }
                 });
                 break;
@@ -153,17 +162,20 @@ function runMenu() {
                     let newDeptName = response.deptName;
                     if (newDeptName) {
                         // query to insert  new department
-                        db.query('INSERT INTO department (name) VALUES (?);', newDeptName, function (err, results) {
+                        db.query(queryMachine.addDepartmentQuery(newDeptName), function (err, results) {
                             if (err) {
                                 console.error(err);
+                                runMenu();
                             }
                             else {
                                 console.log(`Successfully added ${newDeptName} as a department`);
+                                runMenu();
                             }
                         });
                     }
                     else {
                         console.log("Invalid input - please try again!");
+                        runMenu();
                     }
                 });
                 break;
@@ -178,14 +190,17 @@ function runMenu() {
                         db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRoleName}", ${newSalary}, ${newDeptID});`, function (err, results) {
                             if (err) {
                                 console.error(err);
+                                runMenu();
                             }
                             else {
                                 console.log(`Successfully added ${newRoleName} as a role`);
+                                runMenu();
                             }
                         });
                     }
                     else {
                         console.log("Invalid input - please try again!");
+                        runMenu();
                     }
                 });
                 break;
@@ -201,14 +216,17 @@ function runMenu() {
                         db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newEmpFirst}", "${newEmpLast}", ${newEmpRole}, ${newEmpMgr});`, function (err, results) {
                             if (err) {
                                 console.error(err);
+                                runMenu();
                             }
                             else {
                                 console.log(`Successfully added ${newEmpFirst} ${newEmpLast} as an employee`);
+                                runMenu();
                             }
                         });
                     }
                     else {
                         console.log("Invalid input - please try again!");
+                        runMenu();
                     }
                 });
                 break;
@@ -222,14 +240,17 @@ function runMenu() {
                         db.query(`UPDATE employee SET role_id = ${newRoleUpdate} WHERE id = ${newIDUpdate};`, function (err, results) {
                             if (err) {
                                 console.error(err);
+                                runMenu();
                             }
                             else {
                                 console.log(`Successfully updated record for employee ID ${newIDUpdate}`);
+                                runMenu();
                             }
                         });
                     }
                     else {
                         console.log("Invalid input - please try again!");
+                        runMenu();
                     }
                 });
                 break;
