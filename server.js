@@ -5,7 +5,7 @@ const mysql = require("mysql2");
 const cTable = require("console.table");
 
 // DATA
-const menu  = [
+const menu = [
     {
         type: 'list',
         message: 'Please select one of the following options:',
@@ -14,7 +14,8 @@ const menu  = [
     }
 ];
 
-const addDepartment  = [
+// additional prompts for add department options
+const addDepartment = [
     {
         type: 'input',
         message: 'Please enter the name of the new department:',
@@ -22,7 +23,8 @@ const addDepartment  = [
     }
 ];
 
-const addRole  = [
+// additional prompts for add role option
+const addRole = [
     {
         type: 'input',
         message: 'Please enter the name of the new role:',
@@ -40,7 +42,8 @@ const addRole  = [
     }
 ];
 
-const addEmployee  = [
+// additional prompts for add employee option
+const addEmployee = [
     {
         type: 'input',
         message: 'Please enter the first name of the new employee:',
@@ -63,7 +66,8 @@ const addEmployee  = [
     }
 ];
 
-const updateEmployeeRole  = [
+// additional prompts for update employee role option
+const updateEmployeeRole = [
     {
         type: 'input',
         message: "Please enter the ID of the employee whose role is changing:",
@@ -74,14 +78,6 @@ const updateEmployeeRole  = [
         message: "Please enter the selected employee's new role ID:",
         name: 'empRoleUpdate',
     },
-];
-
-const restart  = [
-    {
-        type: 'confirm',
-        message: "Would you like to continue?",
-        name: 'continueCheck',
-    }
 ];
 
 // DB CONNECTION
@@ -116,8 +112,10 @@ app.listen(PORT, () => {
 // FUNCTIONS
 function runMenu() {
     inquirer.prompt(menu).then((response) => {
+        // switch statement leads to different actions depending on selected option
         switch (response.selection) {
             case "View All Departments":
+                // runs  query to show all departments
                 db.query('SELECT * FROM department;', function (err, results) {
                     if (err) {
                         console.error(err);
@@ -128,6 +126,7 @@ function runMenu() {
                 });
                 break;
             case "View All Roles":
+                // runs query to show all roles
                 db.query('SELECT * FROM role;', function (err, results) {
                     if (err) {
                         console.error(err);
@@ -138,6 +137,7 @@ function runMenu() {
                 });
                 break;
             case "View All Employees":
+                // runs query to show all employees
                 db.query('SELECT * FROM employee;', function (err, results) {
                     if (err) {
                         console.error(err);
@@ -148,9 +148,11 @@ function runMenu() {
                 });
                 break;
             case "Add A Department":
+                // runs additional inquirer prompts to gather inputs
                 inquirer.prompt(addDepartment).then((response) => {
                     let newDeptName = response.deptName;
                     if (newDeptName) {
+                        // query to insert  new department
                         db.query('INSERT INTO department (name) VALUES (?);', newDeptName, function (err, results) {
                             if (err) {
                                 console.error(err);
@@ -166,11 +168,13 @@ function runMenu() {
                 });
                 break;
             case "Add A Role":
+                // additional inquirer prompts to gather inputs
                 inquirer.prompt(addRole).then((response) => {
                     let newRoleName = response.roleName;
                     let newSalary = Number(response.salary);
                     let newDeptID = Number(response.deptID);
                     if (newRoleName && newSalary && newDeptID) {
+                        // query to insert new role
                         db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRoleName}", ${newSalary}, ${newDeptID});`, function (err, results) {
                             if (err) {
                                 console.error(err);
@@ -186,12 +190,14 @@ function runMenu() {
                 });
                 break;
             case "Add An Employee":
+                // additional prompt to gather info
                 inquirer.prompt(addEmployee).then((response) => {
                     let newEmpFirst = response.empFirstName;
                     let newEmpLast = response.empLastName;
                     let newEmpRole = Number(response.empRoleID);
                     let newEmpMgr = Number(response.empMgrID);
                     if (newEmpFirst && newEmpLast && newEmpRole && newEmpMgr) {
+                        // query to insert new employee
                         db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newEmpFirst}", "${newEmpLast}", ${newEmpRole}, ${newEmpMgr});`, function (err, results) {
                             if (err) {
                                 console.error(err);
@@ -207,10 +213,12 @@ function runMenu() {
                 });
                 break;
             case "Update An Employee Role":
+                // additional inquirer prompt to gather inputs
                 inquirer.prompt(updateEmployeeRole).then((response) => {
                     let newIDUpdate = Number(response.empIDUpdate);
                     let newRoleUpdate = Number(response.empRoleUpdate);
                     if (newIDUpdate && newRoleUpdate) {
+                        // query to update employee info
                         db.query(`UPDATE employee SET role_id = ${newRoleUpdate} WHERE id = ${newIDUpdate};`, function (err, results) {
                             if (err) {
                                 console.error(err);

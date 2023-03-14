@@ -3,11 +3,13 @@ CREATE DATABASE employee_data_db;
 
 USE employee_data_db;
 
+/* creates table structure for department table*/
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL
 );
 
+/* creates table structure for role table*/
 CREATE TABLE role (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
@@ -18,6 +20,7 @@ CREATE TABLE role (
     ON DELETE SET NULL
 );
 
+/* creates table structure for employee table*/
 CREATE TABLE employee (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
