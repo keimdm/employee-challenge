@@ -187,7 +187,7 @@ function runMenu() {
                     let newDeptID = Number(response.deptID);
                     if (newRoleName && newSalary && newDeptID) {
                         // query to insert new role
-                        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRoleName}", ${newSalary}, ${newDeptID});`, function (err, results) {
+                        db.query(queryMachine.addRoleQuery(newRoleName, newSalary, newDeptID), function (err, results) {
                             if (err) {
                                 console.error(err);
                                 runMenu();
@@ -213,7 +213,7 @@ function runMenu() {
                     let newEmpMgr = Number(response.empMgrID);
                     if (newEmpFirst && newEmpLast && newEmpRole && newEmpMgr) {
                         // query to insert new employee
-                        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newEmpFirst}", "${newEmpLast}", ${newEmpRole}, ${newEmpMgr});`, function (err, results) {
+                        db.query(queryMachine.addEmployeeQuery(newEmpFirst, newEmpLast, newEmpRole, newEmpMgr), function (err, results) {
                             if (err) {
                                 console.error(err);
                                 runMenu();
@@ -237,7 +237,7 @@ function runMenu() {
                     let newRoleUpdate = Number(response.empRoleUpdate);
                     if (newIDUpdate && newRoleUpdate) {
                         // query to update employee info
-                        db.query(`UPDATE employee SET role_id = ${newRoleUpdate} WHERE id = ${newIDUpdate};`, function (err, results) {
+                        db.query(queryMachine.updateEmployeeRoleQuery(newRoleUpdate, newIDUpdate), function (err, results) {
                             if (err) {
                                 console.error(err);
                                 runMenu();
