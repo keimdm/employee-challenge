@@ -226,9 +226,6 @@ function runMenu() {
                 });
                 break;
         }
-        inquirer.prompt(restart).then((response) => {
-            console.log(response);
-        });
     });
 }
 
