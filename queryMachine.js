@@ -19,7 +19,7 @@ class queryMachine {
             return `SELECT ${x} FROM role;`;
         }
         else {
-            return `SELECT * FROM role;`;
+            return `SELECT title AS job_title, role.id, name AS department_name, salary FROM role INNER JOIN department ON role.department_id = department.id;`;
         } 
     }
 
