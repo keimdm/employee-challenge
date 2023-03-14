@@ -42,10 +42,24 @@ const addRole  = [
 
 const addEmployee  = [
     {
-        type: 'list',
-        message: 'Please select one of the following options:',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
-        name: 'shape',
+        type: 'input',
+        message: 'Please enter the first name of the new employee:',
+        name: 'empFirstName',
+    },
+    {
+        type: 'input',
+        message: 'Please enter the last name of the new employee:',
+        name: 'empLastName',
+    },
+    {
+        type: 'input',
+        message: "Please enter the new employee's role ID:",
+        name: 'empRoleID',
+    },
+    {
+        type: 'input',
+        message: "Please enter the new employee's manager ID:",
+        name: 'empMgrID',
     }
 ];
 
@@ -151,6 +165,27 @@ inquirer.prompt(menu).then((response) => {
                         }
                         else {
                             console.log(`Successfully added ${newRoleName} as a role`);
+                        }
+                    });
+                }
+                else {
+                    console.log("Invalid input - please try again!");
+                }
+            });
+            break;
+        case "Add An Employee":
+            inquirer.prompt(addEmployee).then((response) => {
+                let newEmpFirst = response.empFirstName;
+                let newEmpLast = response.empLastName;
+                let newEmpRole = Number(response.empRoleID);
+                let newEmpMgr = Number(response.empMgrID);
+                if (newEmpFirst && newEmpLast && newEmpRole && newEmpMgr) {
+                    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newEmpFirst}", "${newEmpLast}", ${newEmpRole}, ${newEmpMgr});`, function (err, results) {
+                        if (err) {
+                            console.error(err);
+                        }
+                        else {
+                            console.log(`Successfully added ${newEmpFirst} ${newEmpLast} as an employee`);
                         }
                     });
                 }
