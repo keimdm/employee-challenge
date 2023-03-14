@@ -16,19 +16,27 @@ const menu  = [
 
 const addDepartment  = [
     {
-        type: 'list',
-        message: 'Please select one of the following options:',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
-        name: 'shape',
+        type: 'input',
+        message: 'Please enter the name of the new department:',
+        name: 'deptName',
     }
 ];
 
 const addRole  = [
     {
-        type: 'list',
-        message: 'Please select one of the following options:',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee Role'],
-        name: 'shape',
+        type: 'input',
+        message: 'Please enter the name of the new role:',
+        name: 'roleName',
+    },
+    {
+        type: 'input',
+        message: 'Please enter the salary of the new role:',
+        name: 'salary',
+    },
+    {
+        type: 'input',
+        message: 'Please enter the department ID of the new role:',
+        name: 'deptID',
     }
 ];
 
@@ -110,6 +118,44 @@ inquirer.prompt(menu).then((response) => {
                 }
                 else {
                     console.table(results);
+                }
+            });
+            break;
+        case "Add A Department":
+            inquirer.prompt(addDepartment).then((response) => {
+                let newDeptName = response.deptName;
+                if (newDeptName) {
+                    db.query('INSERT INTO department (name) VALUES (?);', newDeptName, function (err, results) {
+                        if (err) {
+                            console.error(err);
+                        }
+                        else {
+                            console.log(`Successfully added ${newDeptName} as a department`);
+                        }
+                    });
+                }
+                else {
+                    console.log("Invalid input - please try again!");
+                }
+            });
+            break;
+        case "Add A Role":
+            inquirer.prompt(addRole).then((response) => {
+                let newRoleName = response.roleName;
+                let newSalary = Number(response.salary);
+                let newDeptID = Number(response.deptID);
+                if (newRoleName && newSalary && newDeptID) {
+                    db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRoleName}", ${newSalary}, ${newDeptID});`, function (err, results) {
+                        if (err) {
+                            console.error(err);
+                        }
+                        else {
+                            console.log(`Successfully added ${newRoleName} as a role`);
+                        }
+                    });
+                }
+                else {
+                    console.log("Invalid input - please try again!");
                 }
             });
             break;
