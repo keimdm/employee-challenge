@@ -32,7 +32,19 @@ class queryMachine {
             return `SELECT ${x} FROM employee;`;
         }
         else {
-            return `SELECT * FROM employee;`;
+            return `SELECT
+            EMPS.id,
+            EMPS.first_name,
+            EMPS.last_name,
+            role.title AS job_title,
+            department.name AS department_name,
+            role.salary,
+            MGRS.first_name AS manager_first_name,
+            MGRS.last_name AS manager_last_name
+        FROM employee EMPS
+        LEFT JOIN role ON EMPS.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
+        LEFT JOIN employee MGRS ON EMPS.manager_id = MGRS.id;`;
         } 
     }
 
