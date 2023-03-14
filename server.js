@@ -8,6 +8,7 @@ const Query = require("./queryMachine.js");
 // DATA
 const queryMachine = new Query();
 
+// question for initial prompt to decide action
 const menu = [
     {
         type: 'list',
@@ -119,6 +120,7 @@ app.listen(PORT, () => {
 
 // FUNCTIONS
 function runMenu() {
+    //prompts user for desired action
     inquirer.prompt(menu).then((response) => {
         // switch statement leads to different actions depending on selected option
         switch (response.selection) {
@@ -187,22 +189,25 @@ function runMenu() {
             case "Add A Role":
                 let newRoleName;
                 let newSalary;
-                // additional inquirer prompts to gather inputs
+                // look up list of department names to be used in inquirer prompt
                 db.promise().query(queryMachine.selectDepartmentQuery("name"))
                     .then((response) => {
                         for (i = 0; i < response[0].length; i++) {
                             addRole[2].choices.push(response[0][i].name);
                         }
+                        // run additional inquirer prompts updated to include department names
                         return inquirer.prompt(addRole);
                     })
                     .then((response) => {
                         addRole[2].choices = [];
                         newRoleName = response.roleName;
                         newSalary = Number(response.salary);
+                        // look up department ID associatd with selected department name
                         return db.promise().query(queryMachine.lookupDepartmentQuery(response.deptID));
                     })
                     .then((response) => {
                         if (newRoleName && newSalary && response[0][0].id) {
+                            // run query to add new role to role table
                             return db.promise().query(queryMachine.addRoleQuery(newRoleName, newSalary, response[0][0].id));
                         }
                         else {
@@ -224,17 +229,20 @@ function runMenu() {
                 let newEmpLast;
                 let newEmpRole;
                 let newEmpMgr;
+                // look up list of job titles to use in inquirer prompt
                 db.promise().query(queryMachine.selectRoleQuery("title"))
                     .then((response) => {
                         for (i = 0; i < response[0].length; i++) {
                             addEmployee[2].choices.push(response[0][i].title);
                         }
+                        // look up list of employee names to use in inquirer prompt
                         return db.promise().query(queryMachine.selectEmployeeName())
                     })
                     .then((response) => {
                         for (i = 0; i < response[0].length; i++) {
                             addEmployee[3].choices.push(response[0][i].first_name + " " + response[0][i].last_name);
                         }
+                        // run additional inquirer prompts updated with job titles and employee names
                         return inquirer.prompt(addEmployee);
                     })
                     .then((response) => {
@@ -243,15 +251,18 @@ function runMenu() {
                         newEmpFirst = response.empFirstName;
                         newEmpLast = response.empLastName;
                         newEmpMgr = response.empMgrID;
+                        // look up role id based on selected job title
                         return db.promise().query(queryMachine.lookupRoleQuery(response.empRoleID));
                     })
                     .then((response) => {
                         newEmpRole = response[0][0].id;
                         let empMgrLookup = newEmpMgr.split(" ");
+                        // look up employee id based on selected manager name
                         return db.promise().query(queryMachine.lookupEmployeeName(empMgrLookup[0], empMgrLookup[1]))
                     })
                     .then((response) => {
                         if (newEmpFirst && newEmpLast && newEmpRole && response[0][0].id) {
+                            // run query to add new employee to table
                             return db.promise().query(queryMachine.addEmployeeQuery(newEmpFirst, newEmpLast, newEmpRole, response[0][0].id));
                         }
                         else {
@@ -271,18 +282,20 @@ function runMenu() {
             case "Update An Employee Role":
                 let newIDUpdate;
                 let newRoleUpdate;
-                // additional inquirer prompt to gather inputs
+                // look up list of employee names for inquirer prompt
                 db.promise().query(queryMachine.selectEmployeeName())
                     .then((response) => {
                         for (i = 0; i < response[0].length; i++) {
                             updateEmployeeRole[0].choices.push(response[0][i].first_name + " " + response[0][i].last_name);
                         }
+                        // look up list of role titles for inquirer prompt
                         return db.promise().query(queryMachine.selectRoleQuery("title"));
                     })
                     .then((response) => {
                         for (i = 0; i < response[0].length; i++) {
                             updateEmployeeRole[1].choices.push(response[0][i].title);
                         }
+                        // run additional inquirer prompt including role titles and employee names
                         return inquirer.prompt(updateEmployeeRole);
                     })
                     .then((response) => {
@@ -290,14 +303,17 @@ function runMenu() {
                         updateEmployeeRole[1].choices = [];
                         newRoleUpdate = response.empRoleUpdate;
                         let empNameLookup = response.empIDUpdate.split(" ");
+                        // look up employee id based on selected employee name
                         return db.promise().query(queryMachine.lookupEmployeeName(empNameLookup[0], empNameLookup[1]));
                     })
                     .then((response) => {
                         newIDUpdate = response[0][0].id;
+                        // look up selected role id based on selected role title
                         return db.promise().query(queryMachine.lookupRoleQuery(newRoleUpdate));
                     })
                     .then((response) => {
                         if (newIDUpdate && response[0][0].id) {
+                            // run query to edit employee entry with new role id
                             return db.promise().query(queryMachine.updateEmployeeRoleQuery(response[0][0].id, newIDUpdate));
                         }
                         else {
